@@ -50,7 +50,7 @@ CombinedModel <- function(...) {
 # infix version
 `$->$` <- function(mod1, mod2) {
   
-  if (!inherits(mod1, "Model") || inherits(mod2, "Model")) {
+  if (!inherits(mod1, "Model") || !inherits(mod2, "Model")) {
     stop("All arguments must be of class 'Model'")
   }
   
