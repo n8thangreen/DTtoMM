@@ -17,7 +17,7 @@ DecisionTree <- function(data) {
   structure(list(data = data), class = c("DecisionTree", "Model"))
 }
 
-MarkovModel <- function(x, ...) {
+MarkovModel <- function(model, ...) {
   UseMethod("MarkovModel")
 }
 
