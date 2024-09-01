@@ -22,7 +22,7 @@ MarkovModel <- function(x, ...) {
 }
 
 # first argument?
-MarkovModel.default <- function(init_probs, trans_matrix = NA, n_cycles = 10) {
+MarkovModel.default <- function(model = NA, init_probs, trans_matrix = NA, n_cycles = 10) {
   structure(list(init_probs = init_probs,
                  trans_matrix = trans_matrix,
                  n_cycles = n_cycles),
@@ -30,11 +30,11 @@ MarkovModel.default <- function(init_probs, trans_matrix = NA, n_cycles = 10) {
 }
 
 # decorator
-MarkovModel.DecisionTree <- function(x, ...) {
-  term_probs <- x$term_probs
+MarkovModel.DecisionTree <- function(model, ...) {
+  term_probs <- model$term_probs
   init_probs <- map_terminal_to_markov(term_probs, mapping)
   
-  nextMethod(generic = MarkovModel, object = x, init_probs, ...)
+  nextMethod(generic = MarkovModel, object = model, init_probs, ...)
 }
 
 CombinedModel <- function(...) {
