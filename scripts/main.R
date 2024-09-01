@@ -29,7 +29,7 @@ MarkovModel.default <- function(model = NA, init_probs, trans_matrix = NA, n_cyc
             class = c("MarkovModel", "Model"))
 }
 
-# decorator
+# decorator on constructor
 MarkovModel.DecisionTree <- function(model, ...) {
   term_probs <- model$term_probs
   init_probs <- map_terminal_to_markov(term_probs, mapping)
@@ -70,6 +70,16 @@ run_model.DecisionTree <- function(model) {
       expected_cost = sum(probability * cost),
       expected_effectiveness = sum(probability * effectiveness)
     )
+}
+
+#
+run_to_markov.DecisionTree <- function(model) {
+  function(model) {
+    res <- run_model(model)
+    term_probs <- model$term_probs
+    res$init_probs <- map_terminal_to_markov(term_probs, mapping)
+    res
+  }
 }
 
 run_model.MarkovModel <- function(model) {
