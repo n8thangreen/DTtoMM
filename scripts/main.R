@@ -11,16 +11,30 @@ decision_tree <- tibble(
 )
 
 # define S3 class
+# constructors
 
 DecisionTree <- function(data) {
   structure(list(data = data), class = c("DecisionTree", "Model"))
 }
 
-MarkovModel <- function(init_probs, trans_matrix = NA, n_cycles = 10) {
+MarkovModel <- function(x, ...) {
+  UseMethod("MarkovModel")
+}
+
+# first argument?
+MarkovModel.default <- function(init_probs, trans_matrix = NA, n_cycles = 10) {
   structure(list(init_probs = init_probs,
                  trans_matrix = trans_matrix,
                  n_cycles = n_cycles),
             class = c("MarkovModel", "Model"))
+}
+
+# decorator
+MarkovModel.DecisionTree <- function(x, ...) {
+  term_probs <- x$term_probs
+  init_probs <- map_terminal_to_markov(term_probs, mapping)
+  
+  nextMethod(generic = MarkovModel, object = x, init_probs, ...)
 }
 
 CombinedModel <- function(...) {
@@ -33,8 +47,14 @@ CombinedModel <- function(...) {
   structure(args, class = "CombinedModel")
 }
 
+###
+
+run_model <- function(model, ...) {
+  UseMethod("run_model")
+}
+
 run_model.DecisionTree <- function(model) {
-  model %>%
+  model$data %>%
     group_by(decision) %>%
     summarise(
       expected_cost = sum(probability * cost),
@@ -76,19 +96,10 @@ get_costs.CombinedModel <- function(model) {
   total_cost
 }
 
-# adaptor/decorator?
-
+# Group terminal node probabilities
+# to Markov model starting states
+#
 map_terminal_to_markov <- function(probs, mapping) {
 
 }
 
-mm_adaptor <- function(x, ...) {
-  UseMethod("mm_adaptor")
-}
-
-mm_adaptor.DecisionTree <- function(x, mapping, ...) {
-  term_probs <- x$term_probs
-  init_probs <- map_terminal_to_markov(term_probs, mapping)
-  
-  c(x, init_probs)
-}
