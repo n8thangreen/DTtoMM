@@ -10,7 +10,7 @@ decision_tree <- tibble(
   effectiveness = c(0.9, 0.5, 0.1, 0.85, 0.4, 0.2)
 )
 
-# sefine S3 classs
+# define S3 class
 
 DecisionTree <- function(data) {
   structure(list(data = data), class = c("DecisionTree", "Model"))
@@ -33,8 +33,8 @@ CombinedModel <- function(...) {
   structure(args, class = "CombinedModel")
 }
 
-run_model.DecisionTree <- function() {
-  tree %>%
+run_model.DecisionTree <- function(model) {
+  model %>%
     group_by(decision) %>%
     summarise(
       expected_cost = sum(probability * cost),
@@ -42,19 +42,22 @@ run_model.DecisionTree <- function() {
     )
 }
 
-run_model.MarkovModel <- function() {
+run_model.MarkovModel <- function(model) {
   
 }
 
 run_model.CombinedModel <- function(model) {
   
   for (i in 1:length(model)) {
-    model_results <- run_model(model[[i]])
+    model_results[[i]] <- run_model(model[[i]])
   }
   
   model_results
 }
 
+# helpers
+
+#
 get_costs.DecisionTree <- function(model) {
   results$expected_cost
 }
@@ -73,7 +76,7 @@ get_costs.CombinedModel <- function(model) {
   total_cost
 }
 
-# adaptor
+# adaptor/decorator?
 
 map_terminal_to_markov <- function(probs, mapping) {
 
@@ -86,4 +89,6 @@ mm_adaptor <- function(x, ...) {
 mm_adaptor.DecisionTree <- function(x, mapping, ...) {
   term_probs <- x$term_probs
   init_probs <- map_terminal_to_markov(term_probs, mapping)
+  
+  c(x, init_probs)
 }
