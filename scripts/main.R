@@ -47,6 +47,16 @@ CombinedModel <- function(...) {
   structure(args, class = "CombinedModel")
 }
 
+# infix version
+`$->$` <- function(mod1, mod2) {
+  
+  if (!inherits(mod1, "Model") || inherits(mod2, "Model")) {
+    stop("All arguments must be of class 'Model'")
+  }
+  
+  structure(list(mod1, mod2), class = "CombinedModel")
+}
+
 ###
 
 run_model <- function(model, ...) {
