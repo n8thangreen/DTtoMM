@@ -74,7 +74,7 @@ run_model.DecisionTree <- function(model) {
 
 #
 run_to_markov.DecisionTree <- function(model) {
-  function(model) {
+  function(model, mapping) {
     res <- run_model(model)
     term_probs <- model$term_probs
     res$init_probs <- map_terminal_to_markov(term_probs, mapping)
